@@ -348,6 +348,7 @@ public class Main {
                 System.out.println(msj);
 
             default:
+                System.out.println("Escoja una opcion valida");
                 break;
         }
 
