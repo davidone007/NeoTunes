@@ -319,12 +319,18 @@ public class NeoTunesController {
                                 if (audios.get(posAudio) instanceof Song) {
 
                                     msj = "Cancion añadida a la playlist" + "\n" +
-                                            generateAutoIdPlaylistByConditions(playlistId, consumerId);
+                                            generateAutoIdPlaylistByConditions(playlistId, consumerId) + "\n"
+                                            + "\n"+ "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
+                                                    .getPlaylists().get(posPlaylist).listAudiosPlaylist();
+                                    
 
                                 } else {
 
                                     msj = "Podcast añadido a la playlist" + "\n" +
-                                            generateAutoIdPlaylistByConditions(playlistId, consumerId);
+                                            generateAutoIdPlaylistByConditions(playlistId, consumerId) + "\n"
+                                            + "\n" + "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
+                                                    .getPlaylists().get(posPlaylist).listAudiosPlaylist();
+                                    
 
                                 }
 
@@ -357,14 +363,19 @@ public class NeoTunesController {
                                     ((Consumer) users.get(posUser)).getPlaylists().get(posPlaylist).getAudios()
                                             .remove(posAudioPlaylist);
                                     msj = "Cancion borrada de la playlist" + "\n" +
-                                            generateAutoIdPlaylistByConditions(playlistId, consumerId);
+                                            generateAutoIdPlaylistByConditions(playlistId, consumerId) + "\n"
+                                            + "\n" + "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
+                                                    .getPlaylists().get(posPlaylist).listAudiosPlaylist();
 
                                 } else {
 
                                     ((Consumer) users.get(posUser)).getPlaylists().get(posPlaylist).getAudios()
                                             .remove(posAudioPlaylist);
                                     msj = "Podcast borrado de la playlist" + "\n" +
-                                            generateAutoIdPlaylistByConditions(playlistId, consumerId);
+                                            generateAutoIdPlaylistByConditions(playlistId, consumerId) + "\n"
+                                            + "\n" + "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
+                                                    .getPlaylists().get(posPlaylist).listAudiosPlaylist();
+                                    ;
 
                                 }
 
@@ -372,8 +383,9 @@ public class NeoTunesController {
                                 msj = "La cancion no fue encontrada en la playlist";
                             }
 
+                            break;
+
                         default:
-                            msj = "Ingrese una opcion valida";
                             break;
                     }
 
@@ -634,6 +646,34 @@ public class NeoTunesController {
      */
     public void setAudios(ArrayList<Audio> audios) {
         this.audios = audios;
+    }
+
+    /**
+     * listAudiosController: List the audios of the system
+     * 
+     * @return msj - String: The list of the audios
+     */
+    public String listAudiosController() {
+        String msj = "";
+        for (int i = 0; i < audios.size(); i++) {
+            if (audios.get(i) != null) {
+                if (audios.get(i) instanceof Podcast) {
+                    msj += "CANCION #" + (i + 1) + "\n" + "Nombre del podcast: " + audios.get(i).getName() + "\n"
+                            + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
+                } else {
+                    msj += "CANCION #" + (i + 1) + "\n" + "Nombre de la cancion: " + audios.get(i).getName()
+                            + "\n" + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
+                }
+            }
+
+        }
+
+        if (msj == "") {
+            msj = "NeoTunes aun no tiene audios";
+        }
+
+        return msj;
+
     }
 
 }

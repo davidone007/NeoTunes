@@ -141,4 +141,32 @@ public class Playlist {
         return hasPodcast;
     }
 
+
+    /**
+     * listAudios: List the audios of a playlist
+     * 
+     * @return msj - String: The list of the audios
+     */
+    public String listAudiosPlaylist(){
+        String msj = "";
+        for (int i = 0; i < audios.size(); i++) {
+            if(audios.get(i) != null){
+                if(audios.get(i) instanceof Podcast){
+                    msj += "CANCION #" + (i+1) + "\n" + "Nombre del podcast: " + audios.get(i).getName() + "\n" + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
+                }else{
+                    msj += "CANCION #" + (i + 1) + "\n" + "Nombre de la cancion: " + audios.get(i).getName()
+                            + "\n" + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
+                }
+            }
+            
+        }
+
+        if (msj == ""){
+            msj = "La playlist no tiene audios";
+        }
+        
+        return msj;
+
+    }
+
 }

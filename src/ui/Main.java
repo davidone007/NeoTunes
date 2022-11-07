@@ -313,6 +313,8 @@ public class Main {
 
         switch (option) {
             case 0:
+                System.out.println("Audios de NeoTunes");
+                System.out.println(controller.listAudiosController());
                 System.out.println("Escriba el id de la playlist que desea editar");
                 playlistId = reader.next();
                 System.out.println("Escriba el nombre del audio que desea añadir (cancion/podcast)");
@@ -325,7 +327,8 @@ public class Main {
                 break;
 
             case 1:
-
+                System.out.println("Audios de NeoTunes");
+                System.out.println(controller.listAudiosController());
                 System.out.println("Escriba el id de la playlist que desea editar");
                 playlistId = reader.next();
                 System.out.println("Escriba el nombre que desea ponerle");
@@ -337,7 +340,8 @@ public class Main {
                 break;
 
             case 2:
-
+                System.out.println("Audios de NeoTunes");
+                System.out.println(controller.listAudiosController());
                 System.out.println("Escriba el id de la playlist que desea editar");
                 playlistId = reader.next();
                 System.out.println("Escriba el nombre del audio que desea borrar (cancion/podcast)");
@@ -347,8 +351,11 @@ public class Main {
                 msj = controller.editPlaylist(playlistId, consumerId, option, newNamePlaylist, audioName, idCreator);
                 System.out.println(msj);
 
+                break;
+
             default:
                 System.out.println("Escoja una opcion valida");
+
                 break;
         }
 
