@@ -1,6 +1,6 @@
 package model;
 
-public class Podcast extends Audio {
+public class Podcast extends Audio implements IPlay {
 
     private String description;
     private TypeCategory category;
@@ -20,6 +20,10 @@ public class Podcast extends Audio {
         this.description = description;
         category = TypeCategory.values()[optionCategory];
 
+    }
+
+    public String play() {
+        return "Reproduciendo el podcast: " + getName();
     }
 
     /**

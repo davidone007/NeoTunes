@@ -143,7 +143,7 @@ public class Playlist {
 
 
     /**
-     * listAudios: List the audios of a playlist
+     * listAudiosPlaylist: List the audios of a playlist
      * 
      * @return msj - String: The list of the audios
      */
@@ -152,9 +152,9 @@ public class Playlist {
         for (int i = 0; i < audios.size(); i++) {
             if(audios.get(i) != null){
                 if(audios.get(i) instanceof Podcast){
-                    msj += "CANCION #" + (i+1) + "\n" + "Nombre del podcast: " + audios.get(i).getName() + "\n" + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
+                    msj += "-PLAYLIST- PODCAST #" + (i+1) + "\n" + "Nombre del podcast: " + audios.get(i).getName() + "\n" + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
                 }else{
-                    msj += "CANCION #" + (i + 1) + "\n" + "Nombre de la cancion: " + audios.get(i).getName()
+                    msj += "-PLAYLIST- CANCION #" + (i + 1) + "\n" + "Nombre de la cancion: " + audios.get(i).getName()
                             + "\n" + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
                 }
             }

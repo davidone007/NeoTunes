@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class NeoTunesController {
@@ -140,6 +141,27 @@ public class NeoTunesController {
     }
 
     /**
+     * searchConsumerById: This method search a consumer
+     * 
+     * @param id String - Represents the id of the user to search
+     * @return int: pos - The position of the user in the ArrayList
+     */
+    public int searchConsumerById(String id) {
+        int pos = -1;
+        boolean isFound = false;
+        for (int i = 0; i < users.size() && !isFound; i++) {
+            if (users.get(i) != null) {
+                if (users.get(i).getId().equalsIgnoreCase(id) && users.get(i) instanceof Consumer) {
+                    pos = i;
+                    isFound = true;
+                }
+            }
+        }
+
+        return pos;
+    }
+
+    /**
      * addAudio: What this method does is add a audio to the Consumer
      * 
      * @param newAudio Audio - The audio to add to the consumer
@@ -213,7 +235,7 @@ public class NeoTunesController {
         if (posUser != -1) {
             if (users.get(posUser) instanceof Consumer) {
                 if (users.get(posUser) instanceof Standard) {
-                    if (((Consumer) users.get(posUser)).getPlaylists().size() <= PLAYLIST_LIMIT_STANDARD_USER) {
+                    if (((Consumer) users.get(posUser)).getPlaylists().size() < PLAYLIST_LIMIT_STANDARD_USER) {
                         Playlist newPlaylist = new Playlist(name);
                         String matrix = addRandomNumbersMatrixAndPrint();
                         String autoId = generateDefaultAutoId();
@@ -314,15 +336,15 @@ public class NeoTunesController {
                             if (posAudio != -1) {
 
                                 newAudioPlaylist = audios.get(posAudio);
+                                newAudioPlaylist.setNumberReproductions(0);
                                 ((Consumer) users.get(posUser)).getPlaylists().get(posPlaylist)
                                         .addAudioPlaylist(newAudioPlaylist);
                                 if (audios.get(posAudio) instanceof Song) {
 
                                     msj = "Cancion añadida a la playlist" + "\n" +
                                             generateAutoIdPlaylistByConditions(playlistId, consumerId) + "\n"
-                                            + "\n"+ "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
+                                            + "\n" + "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
                                                     .getPlaylists().get(posPlaylist).listAudiosPlaylist();
-                                    
 
                                 } else {
 
@@ -330,7 +352,6 @@ public class NeoTunesController {
                                             generateAutoIdPlaylistByConditions(playlistId, consumerId) + "\n"
                                             + "\n" + "Audios de la playlist: " + "\n" + ((Consumer) users.get(posUser))
                                                     .getPlaylists().get(posPlaylist).listAudiosPlaylist();
-                                    
 
                                 }
 
@@ -658,7 +679,7 @@ public class NeoTunesController {
         for (int i = 0; i < audios.size(); i++) {
             if (audios.get(i) != null) {
                 if (audios.get(i) instanceof Podcast) {
-                    msj += "CANCION #" + (i + 1) + "\n" + "Nombre del podcast: " + audios.get(i).getName() + "\n"
+                    msj += "PODCAST #" + (i + 1) + "\n" + "Nombre del podcast: " + audios.get(i).getName() + "\n"
                             + "Id del creador: " + audios.get(i).getIdCreator() + "\n";
                 } else {
                     msj += "CANCION #" + (i + 1) + "\n" + "Nombre de la cancion: " + audios.get(i).getName()
@@ -671,6 +692,750 @@ public class NeoTunesController {
         if (msj == "") {
             msj = "NeoTunes aun no tiene audios";
         }
+
+        return msj;
+
+    }
+
+    /**
+     * listPlaylistConsumer: List the playlist of a consumer
+     * 
+     * @param consumerId: String - The id of the consumer
+     * @return msj - String: The list of the audios or a validation
+     */
+    public String listPlaylistConsumer(String consumerId) {
+        int posConsumer = searchConsumerById(consumerId);
+        String msj = "No se ha encontrado el usuario a buscar";
+
+        if (posConsumer != -1) {
+            msj = ((Consumer) users.get(posConsumer)).listPlaylistConsumer();
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * listSongsConsumer: List the songs of a consumer
+     * 
+     * @param consumerId: String - The id of the consumer
+     * @return msj - String: The list of the songs
+     */
+    public String listSongsConsumer(String consumerId) {
+        int posConsumer = searchConsumerById(consumerId);
+        String msj = "No se ha encontrado el usuario a buscar";
+
+        if (posConsumer != -1) {
+            msj = ((Consumer) users.get(posConsumer)).listSongsConsumer();
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * listPlaylistToShareConsumer: List the playlist of a consumer
+     * 
+     * @param consumerId: String - The id of the consumer
+     * @return msj - String: The list of the audios or a validation
+     */
+    public String listPlaylistToShareConsumer(String consumerId) {
+        int posConsumer = searchConsumerById(consumerId);
+        String msj = "No se ha encontrado el usuario a buscar";
+
+        if (posConsumer != -1) {
+            msj = ((Consumer) users.get(posConsumer)).listPlaylistToShareConsumer();
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * listAudioPlaylistConsumer: List the audios of a playlist of a consumer
+     * 
+     * @param consumerId: String - The id of the consumer
+     * @param idPlaylist: String - The id of the playlist
+     * @return msj - String: The list of the audios or a validation
+     */
+    public String listAudioPlaylistConsumer(String consumerId, String idPlaylist) {
+        int posPlaylist = -1;
+        int posConsumer = searchConsumerById(consumerId);
+
+        String msj = "No se ha encontrado el usuario a buscar";
+
+        if (posConsumer != -1) {
+            posPlaylist = ((Consumer) users.get(posConsumer)).searchPlaylistById(idPlaylist);
+            if (posPlaylist != -1) {
+                msj = ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).listAudiosPlaylist();
+
+            } else {
+                msj = "La playlist no fue encontrada";
+            }
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * searchPlaylistById: Search a playlist of a consumer
+     * 
+     * @param consumerId: String - The id of the consumer
+     * @param playlistId: String - The id of the playlist
+     * @return posPlaylist - int: The position of the playlist in the ArrayList
+     */
+    public int searchPlaylistById(String consumerId, String playlistId) {
+        int posConsumer = searchConsumerById(consumerId);
+        int posPlaylist = ((Consumer) users.get(posConsumer)).searchPlaylistById(playlistId);
+
+        return posPlaylist;
+    }
+
+    /**
+     * searchPlaylistById: Search a playlist of a consumer
+     * 
+     * @param consumerId: String - The id of the consumer
+     * @param idCreator:  String - The id of the creator of the song
+     * @param songName:   String - The name of the song
+     * @return posSong - int: The position of the song in the ArrayList of the
+     *         consumer
+     */
+    public int searchSongConsumer(String consumerId, String songName, String idCreator) {
+        int posConsumer = searchConsumerById(consumerId);
+        int posSong = ((Consumer) users.get(posConsumer)).searchSongByNameAndIdCreator(songName, idCreator);
+
+        return posSong;
+    }
+
+    /**
+     * sharePlaylist: Share a playlist by the autoId
+     * 
+     * @param consumerId:  String - The id of the consumer
+     * @param posPlaylist: String - The index of the palylist in the ArrayList
+     * @return msj - String: The code for share
+     */
+    public String sharePlaylist(int posPlaylist, String consumerId) {
+        String msj = "";
+
+        int posConsumer = searchConsumerById(consumerId);
+
+        if (posConsumer != -1) {
+
+            if (posPlaylist < ((Consumer) users.get(posConsumer)).getPlaylists().size() && posPlaylist >= 0) {
+
+                msj = "El id de la playlist a compartir "
+                        + ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                .getName()
+                        + " es: "
+                        + ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                .getAutoId();
+
+            } else {
+
+                msj = "Por favor escoja una posicion valida de la playlist";
+
+            }
+
+        } else {
+            msj = "El usuario no fue encontrado";
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * buySongConsumer: Add a song to the ArrayList of the consumer
+     * 
+     * @param idConsumer: String - The id of the consumer
+     * @param idCreator:  String - The id of the creator of the song
+     * @param audioName:  String - The name of the song to buy
+     * @return msj - String: The confirmation
+     */
+    public String buySongConsumer(String audioName, String idCreator, String idConsumer) {
+        String msj = "";
+
+        int posConsumer = searchConsumerById(idConsumer);
+
+        if (posConsumer != -1) {
+
+            int posSong = searchAudioByNameAndIdCreator(audioName, idCreator);
+
+            if (posSong != -1) {
+
+                if (audios.get(posSong) instanceof Song) {
+
+                    if (users.get(posConsumer) instanceof Premium) {
+
+                        Audio newAudioBuyByUser = audios.get(posSong);
+                        ((Song) newAudioBuyByUser).setBuyDate(LocalDate.now());
+                        ((Song) audios.get(posSong)).setAmountSale(((Song) audios.get(posSong)).getAmountSale() + 1);
+                        ((Consumer) users.get(posConsumer)).getSongsOfTheUser().add((Song) newAudioBuyByUser);
+
+                        msj = "El usuario premium ha comprado la cancion con las siguientes caracteristicas: " + "\n"
+                                + audios.get(posSong).toString();
+
+                    } else if (users.get(posConsumer) instanceof Standard) {
+                        if (((Consumer) users.get(posConsumer)).getPlaylists().size() < SONGS_LIMIT_STANDARD_USER) {
+                            Audio newAudioBuyByUser = audios.get(posSong);
+                            ((Song) newAudioBuyByUser).setBuyDate(LocalDate.now());
+                            ((Song) audios.get(posSong))
+                                    .setAmountSale(((Song) audios.get(posSong)).getAmountSale() + 1);
+                            ((Consumer) users.get(posConsumer)).getSongsOfTheUser().add((Song) newAudioBuyByUser);
+                            msj = "El usuario estandar ha comprado la cancion con las siguientes caracteristicas: "
+                                    + "\n" + audios.get(posSong).toString();
+                        } else {
+                            msj = "El usuario estandar ya ha alcanzado el limite de canciones compradas";
+                        }
+                    }
+
+                } else {
+                    msj = "El audio fue encontrado pero no es una CANCION";
+                }
+
+            } else {
+                msj = "La cancion no se ha encontrado";
+            }
+
+        } else {
+            msj = "El usuario no se ha encontrado";
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * This method allow to play a Audio
+     * 
+     * @param posAudio:    int - The index of the audio in the ArrayList of the
+     *                     playlist
+     * @param consumerId:  String - The id of the consumer
+     * @param posPlaylist: int - The index of the playlist in the arraylist
+     * @return msj: String - The confirmation of the reproduction
+     */
+    public String playAudio(int posPlaylist, int posAudio, String consumerId) {
+        String msj = "";
+        int upperBound = Ad.values().length;
+        int lowerBound = 0;
+        int range = (upperBound - lowerBound) + 1;
+
+        int posConsumer = searchConsumerById(consumerId);
+
+        if (posConsumer != -1) {
+
+            if (posPlaylist < ((Consumer) users.get(posConsumer)).getPlaylists().size() && posPlaylist >= 0) {
+
+                if (posAudio < ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios().size()
+                        && posAudio >= 0) {
+
+                    String nameAudio = ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                            .get(posAudio).getName();
+                    String producerId = ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                            .get(posAudio).getIdCreator();
+                    int posAudioNeotunes = searchAudioByNameAndIdCreator(nameAudio, producerId);
+
+                    int posProducer = searchUserById(producerId);
+
+                    if (users.get(posConsumer) instanceof Premium) {
+                        if (((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                .get(posAudio) instanceof Song) {
+                            audios.get(posAudioNeotunes)
+                                    .setNumberReproductions(audios.get(posAudioNeotunes).getNumberReproductions() + 1);
+                            ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                    .get(posAudio)
+                                    .setNumberReproductionsPlaylist(((Consumer) users.get(posConsumer)).getPlaylists()
+                                            .get(posPlaylist).getAudios().get(posAudio).getNumberReproductionsPlaylist()
+                                            + 1);
+
+                            users.get(posProducer)
+                                    .setAmountReproduction(users.get(posProducer).getAmountReproduction() + 1);
+                            msj = ((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                    .getAudios().get(posAudio)).play();
+                        } else if (((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                .get(posAudio) instanceof Podcast) {
+                            audios.get(posAudioNeotunes)
+                                    .setNumberReproductions(audios.get(posAudioNeotunes).getNumberReproductions() + 1);
+                            users.get(posProducer)
+                                    .setAmountReproduction(users.get(posProducer).getAmountReproduction() + 1);
+                            ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                    .get(posAudio)
+                                    .setNumberReproductionsPlaylist(((Consumer) users.get(posConsumer)).getPlaylists()
+                                            .get(posPlaylist).getAudios().get(posAudio).getNumberReproductionsPlaylist()
+                                            + 1);
+                            msj = ((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                    .getAudios().get(posAudio)).play();
+                        }
+
+                    } else if (users.get(posConsumer) instanceof Standard) {
+                        if (((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                .get(posAudio) instanceof Song) {
+                            audios.get(posAudioNeotunes)
+                                    .setNumberReproductions(audios.get(posAudioNeotunes).getNumberReproductions() + 1);
+                            users.get(posProducer)
+                                    .setAmountReproduction(users.get(posProducer).getAmountReproduction() + 1);
+                            ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                    .get(posAudio)
+                                    .setNumberReproductionsPlaylist(((Consumer) users.get(posConsumer)).getPlaylists()
+                                            .get(posPlaylist).getAudios().get(posAudio).getNumberReproductionsPlaylist()
+                                            + 1);
+                            ((Standard) users.get(posConsumer)).setAmountReproductionsSongs(
+                                    ((Standard) users.get(posConsumer)).getAmountReproductionsSongs() + 1);
+                            msj = ((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                    .getAudios().get(posAudio)).play();
+                            if (((Standard) users.get(posConsumer)).getAmountReproductionsSongs() % 2 == 0
+                                    & ((Standard) users.get(posConsumer)).getAmountReproductionsSongs() != 0) {
+                                msj = "Primero pasaremos un corto anuncio:" + "\n"
+                                        + Ad.values()[(int) (Math.random() * range) + lowerBound].toString() + "\n \n" +
+                                        ((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                                .getAudios().get(posAudio)).play();
+                            }
+                        } else if (((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                .get(posAudio) instanceof Podcast) {
+                            audios.get(posAudioNeotunes)
+                                    .setNumberReproductions(audios.get(posAudioNeotunes).getNumberReproductions() + 1);
+                            ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist).getAudios()
+                                    .get(posAudio)
+                                    .setNumberReproductionsPlaylist(((Consumer) users.get(posConsumer)).getPlaylists()
+                                            .get(posPlaylist).getAudios().get(posAudio).getNumberReproductionsPlaylist()
+                                            + 1);
+                            users.get(posProducer)
+                                    .setAmountReproduction(users.get(posProducer).getAmountReproduction() + 1);
+                            msj = "Primero pasaremos un corto anuncio:" + "\n"
+                                    + Ad.values()[(int) (Math.random() * range) + lowerBound].toString() + "\n \n" +
+                                    ((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(posPlaylist)
+                                            .getAudios().get(posAudio)).play();
+                        }
+
+                    }
+
+                } else {
+
+                    msj = "Por favor escoja una posicion valida de la cancion que desea reproducir";
+
+                }
+
+            } else {
+                msj = "Por favor escoja una posicion valida de la playlist";
+            }
+
+        } else {
+            msj = "El usuario no fue encontrado";
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * This method allow to generate the reports of the system
+     * 
+     * @param option: int - The option choosen by the user
+     * @return msj: String - The report
+     */
+    public String generateReport(int option, boolean individualOption, String consumerId) {
+
+        String msj = "";
+
+        switch (option) {
+            // Total reproductions
+            case 1:
+                int totalReproductionsSongs = 0;
+                int totalReproductionsPodcast = 0;
+                int totalReproductionsSongsDuration = 0;
+                int totalReproductionsPodcastDuration = 0;
+
+                for (int i = 0; i < audios.size(); i++) {
+                    if (audios.get(i) != null) {
+                        if (audios.get(i) instanceof Song) {
+                            if (audios.get(i).getDuration() > 0) {
+                                totalReproductionsSongs += audios.get(i).getNumberReproductions();
+                                totalReproductionsSongsDuration += audios.get(i).getDuration()
+                                        * audios.get(i).getNumberReproductions();
+                            }
+
+                        } else if (audios.get(i) instanceof Podcast) {
+                            totalReproductionsPodcast += audios.get(i).getNumberReproductions();
+                            if (audios.get(i).getDuration() > 0) {
+                                totalReproductionsPodcastDuration += audios.get(i).getDuration() * audios
+                                        .get(i).getNumberReproductions();
+                            }
+                        }
+                    }
+
+                }
+
+                msj = "El numero total de reproducciones de CANCIONES fue: " + totalReproductionsSongs
+                        + " con un tiempo acumulado (segundos) de: " + totalReproductionsSongsDuration + "\n" +
+                        "El numero total de reproducciones de PODCAST fue: " + totalReproductionsPodcast
+                        + " con un tiempo acumulado (segundos) de: " + totalReproductionsPodcastDuration + "\n";
+
+                break;
+
+            // Genre most listened
+            case 2:
+
+                if (individualOption == true) {
+
+                    int posConsumer = searchUserById(consumerId);
+
+                    if (posConsumer != -1) {
+
+                        int[] typeGenre = new int[] { 0, 0, 0, 0 };
+                        for (int i = 0; i < ((Consumer) users.get(posConsumer)).getPlaylists().size(); i++) {
+                            for (int j = 0; j < ((Consumer) users.get(posConsumer)).getPlaylists().get(i).getAudios()
+                                    .size(); j++) {
+                                if (((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(i).getAudios()
+                                        .get(j) instanceof Song)) {
+                                    if (((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(i).getAudios()
+                                            .get(j)).getGenre() == TypeGenre.ROCK) {
+                                        typeGenre[0] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    } else if (((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                            .getAudios()
+                                            .get(j)).getGenre() == TypeGenre.POP) {
+                                        typeGenre[1] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    } else if (((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                            .getAudios()
+                                            .get(j)).getGenre() == TypeGenre.TRAP) {
+                                        typeGenre[2] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    } else if (((Song) ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                            .getAudios()
+                                            .get(j)).getGenre() == TypeGenre.HOUSE) {
+                                        typeGenre[3] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    }
+                                }
+                            }
+
+                        }
+
+                        int max = -1;
+                        int position = -1;
+                        for (int i : typeGenre) {
+                            if (i > max) {
+                                max = i;
+                            }
+                        }
+
+                        int contador = -1;
+                        for (int i : typeGenre) {
+                            contador += 1;
+                            if (max == i) {
+                                position = contador;
+                            }
+                        }
+                        msj += "\n El genero mas escuchado es: " + TypeGenre.values()[position] + " con "
+                                + typeGenre[position]
+                                + " reproducciones";
+
+                    } else {
+                        msj = "No se encontro el usuario";
+                    }
+
+                } else {
+
+                    int[] typeGenre = new int[] { 0, 0, 0, 0 };
+                    for (int i = 0; i < audios.size(); i++) {
+                        if (audios.get(i) instanceof Song) {
+                            if (((Song) audios.get(i)).getGenre() == TypeGenre.ROCK) {
+                                typeGenre[0] += audios.get(i).getNumberReproductions();
+                            } else if (((Song) audios.get(i)).getGenre() == TypeGenre.POP) {
+                                typeGenre[1] += audios.get(i).getNumberReproductions();
+                            } else if (((Song) audios.get(i)).getGenre() == TypeGenre.TRAP) {
+                                typeGenre[2] += audios.get(i).getNumberReproductions();
+                            } else if (((Song) audios.get(i)).getGenre() == TypeGenre.HOUSE) {
+                                typeGenre[3] += audios.get(i).getNumberReproductions();
+                            }
+                        }
+                    }
+
+                    int max = -1;
+                    int position = -1;
+                    for (int i : typeGenre) {
+                        if (i > max) {
+                            max = i;
+                        }
+                    }
+
+                    int contador = -1;
+                    for (int i : typeGenre) {
+                        contador += 1;
+                        if (max == i) {
+                            position = contador;
+                        }
+                    }
+                    msj += "\n El genero mas escuchado es: " + TypeGenre.values()[position] + " con "
+                            + typeGenre[position]
+                            + " reproducciones";
+
+                }
+
+                break;
+
+            // Category most listened
+            case 3:
+
+                if (individualOption == true) {
+
+                    int posConsumer = searchUserById(consumerId);
+
+                    if (posConsumer != -1) {
+
+                        int[] typeCategory = new int[] { 0, 0, 0, 0 };
+                        for (int i = 0; i < ((Consumer) users.get(posConsumer)).getPlaylists().size(); i++) {
+                            for (int j = 0; j < ((Consumer) users.get(posConsumer)).getPlaylists().get(i).getAudios()
+                                    .size(); j++) {
+                                if (((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(i).getAudios()
+                                        .get(j) instanceof Podcast)) {
+                                    if (((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(i).getAudios()
+                                            .get(j)).getCategory() == TypeCategory.POLITICA) {
+                                        typeCategory[0] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    } else if (((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                            .getAudios()
+                                            .get(j)).getCategory() == TypeCategory.ENTRETENIMIENTO) {
+                                        typeCategory[1] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    } else if (((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                            .getAudios()
+                                            .get(j)).getCategory() == TypeCategory.VIDEOJUEGO) {
+                                        typeCategory[2] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    } else if (((Podcast) ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                            .getAudios()
+                                            .get(j)).getCategory() == TypeCategory.MODA) {
+                                        typeCategory[3] += ((Consumer) users.get(posConsumer)).getPlaylists().get(i)
+                                                .getAudios()
+                                                .get(j).getNumberReproductionsPlaylist();
+                                    }
+                                }
+                            }
+
+                        }
+
+                        int max = -1;
+                        int position = -1;
+                        for (int i : typeCategory) {
+                            if (i > max) {
+                                max = i;
+                            }
+                        }
+
+                        int contador = -1;
+                        for (int i : typeCategory) {
+                            contador += 1;
+                            if (max == i) {
+                                position = contador;
+                            }
+                        }
+                        msj += "\n La categoria mas escuchada es: " + TypeCategory.values()[position] + " con "
+                                + typeCategory[position]
+                                + " reproducciones";
+
+                    } else {
+                        msj = "No se encontro el usuario";
+                    }
+
+                } else {
+
+                    int[] typeCategory = new int[] { 0, 0, 0, 0 };
+                    for (int i = 0; i < audios.size(); i++) {
+                        if (audios.get(i) instanceof Podcast) {
+                            if (((Podcast) audios.get(i)).getCategory() == TypeCategory.POLITICA) {
+                                typeCategory[0] += audios.get(i).getNumberReproductions();
+                            } else if (((Podcast) audios.get(i)).getCategory() == TypeCategory.ENTRETENIMIENTO) {
+                                typeCategory[1] += audios.get(i).getNumberReproductions();
+                            } else if (((Podcast) audios.get(i)).getCategory() == TypeCategory.VIDEOJUEGO) {
+                                typeCategory[2] += audios.get(i).getNumberReproductions();
+                            } else if (((Podcast) audios.get(i)).getCategory() == TypeCategory.MODA) {
+                                typeCategory[3] += audios.get(i).getNumberReproductions();
+                            }
+                        }
+                    }
+
+                    int max = -1;
+                    int position = -1;
+                    for (int i : typeCategory) {
+                        if (i > max) {
+                            max = i;
+                        }
+                    }
+
+                    int contador = -1;
+                    for (int i : typeCategory) {
+                        contador += 1;
+                        if (max == i) {
+                            position = contador;
+                        }
+                    }
+                    msj += "\n La categoria mas escuchada es: " + TypeCategory.values()[position] + " con "
+                            + typeCategory[position]
+                            + " reproducciones";
+                }
+
+                break;
+
+            // Top 5 users
+            case 4:
+
+                users.sort(null);
+                int counter = 0;
+
+                for (int i = 0; i < users.size() & 5 > counter; i++) {
+                    if (users.get(i) != null) {
+                        if (users.get(i) instanceof Artist) {
+                            msj += "Artista top #" + (counter + 1) + "\n" +
+                                    "Nombre: " + ((Producer) users.get(i)).getName() + "\n" +
+                                    "Numero de reproducciones: " + users.get(i).getAmountReproduction() + "\n";
+                            counter++;
+
+                        }
+
+                    }
+
+                }
+
+
+                counter = 0;
+                for (int i = 0; i < users.size() & 5 > counter; i++) {
+                    if (users.get(i) != null) {
+                        if (users.get(i) instanceof Creator) {
+                            msj += "Creador top #" + (counter + 1) + "\n" +
+                                    "Nombre: " + ((Producer) users.get(i)).getName() + "\n" +
+                                    "Numero de reproducciones: " + users.get(i).getAmountReproduction() + "\n";
+                            counter++;
+
+                        }
+
+                    }
+
+                }
+
+                break;
+
+            // Top 10 audios
+            case 5:
+
+                audios.sort(null);
+                counter = 0;
+
+                for (int i = 0; i < audios.size() & 10 > counter; i++) {
+                    if (audios.get(i) != null) {
+                        if (audios.get(i) instanceof Song) {
+                            msj += "Cancion top #" + (counter + 1) + "\n" +
+                                    "Nombre: " + audios.get(i).getName() + "\n" +
+                                    "Genero: " + ((Song) audios.get(i)).getGenre() + "\n" +
+                                    "Numero de reproducciones: " + audios.get(i).getNumberReproductions() + "\n";
+                            counter++;
+
+                        }
+
+                    }
+
+                }
+                
+                counter = 0;
+                for (int i = 0; i < audios.size() & 10 > counter; i++) {
+                    if (audios.get(i) != null) {
+                        if (audios.get(i) instanceof Podcast) {
+                            msj += "Podcast top #" + (counter + 1) + "\n" +
+                                    "Nombre: " + audios.get(i).getName() + "\n" +
+                                    "Categoria: " + ((Podcast) audios.get(i)).getCategory() + "\n" +
+                                    "Numero de reproducciones: " + audios.get(i).getNumberReproductions() + "\n";
+                            counter++;
+
+                        }
+
+                    }
+
+                }
+
+                break;
+
+            // Report by gender
+            case 6:
+
+                for (int i = 0; i < TypeGenre.values().length; i++) {
+                    msj += generateReportMoneyAndAmountGenre(TypeGenre.values()[i]);
+
+                }
+
+                break;
+
+            // Best selling song
+            case 7:
+                Audio biggestAudio = new Song("0", "0", 0, "0", "0", 0, 0);
+
+                for (int i = 0; i < audios.size(); i++) {
+                    if (audios.get(i) != null) {
+                        if (audios.get(i) instanceof Song) {
+                            if (((Song) audios.get(i)).getAmountSale() > ((Song) biggestAudio).getAmountSale()) {
+                                biggestAudio = audios.get(i);
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                msj = "La cancion mas vendida de la plataforma es: " + biggestAudio.getName()
+                        + " con un total de ventas de: " + ((Song) biggestAudio).getAmountSale() + "\n" +
+                        "El total de dinero recaudado es de: "
+                        + ((Song) biggestAudio).getAmountSale() * ((Song) biggestAudio).getSaleValue();
+
+                break;
+
+            default:
+
+                break;
+
+        }
+
+        return msj;
+
+    }
+
+    /**
+     * generateReportMoneyAndAmountGenre: This method allow to generate the report
+     * of the genres
+     * 
+     * @param genre - TypeGenre: The genre of the song
+     * @return msj: String - The report of the genre
+     */
+    public String generateReportMoneyAndAmountGenre(TypeGenre genre) {
+        int amountSales = 0;
+        double totalMoney = 0;
+        String msj = "";
+
+        for (int i = 0; i < audios.size(); i++) {
+            if (audios.get(i) != null) {
+                if (audios.get(i) instanceof Song) {
+                    if (((Song) audios.get(i)).getGenre() == genre) {
+                        amountSales += ((Song) audios.get(i)).getAmountSale();
+                        if (((Song) audios.get(i)).getSaleValue() > 0) {
+                            totalMoney += ((Song) audios.get(i)).getAmountSale()
+                                    * ((Song) audios.get(i)).getSaleValue();
+                        }
+                    }
+                }
+            }
+
+        }
+
+        msj = "El genero " + genre + " ha hecho un total de ventas de: " + amountSales + "\n" +
+                "Recaudando un total de dinero de: " + totalMoney + "\n \n";
 
         return msj;
 

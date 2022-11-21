@@ -1,13 +1,12 @@
 package model;
 
-import java.time.LocalTime;
 
 public abstract class Producer extends User {
 
     private String name;
     private String urlImage;
-    private int amountReproduction;
-    private LocalTime totalReproductionTime;
+
+   
 
     /**
      * 
@@ -24,6 +23,9 @@ public abstract class Producer extends User {
         this.urlImage = urlImage;
 
     }
+    
+
+   
 
     /**
      * @return String return the name
@@ -53,32 +55,8 @@ public abstract class Producer extends User {
         this.urlImage = urlImage;
     }
 
-    /**
-     * @return int return the amountReproduction
-     */
-    public int getAmountReproduction() {
-        return amountReproduction;
+  
+
+   
     }
 
-    /**
-     * @param amountReproduction the amountReproduction to set
-     */
-    public void setAmountReproduction(int amountReproduction) {
-        this.amountReproduction = amountReproduction;
-    }
-
-    /**
-     * @return LocalTime return the totalReproductionTime
-     */
-    public LocalTime getTotalReproductionTime() {
-        return totalReproductionTime;
-    }
-
-    /**
-     * @param totalReproductionTime the totalReproductionTime to set
-     */
-    public void setTotalReproductionTime(LocalTime totalReproductionTime) {
-        this.totalReproductionTime = totalReproductionTime;
-    }
-
-}

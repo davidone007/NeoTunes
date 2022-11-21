@@ -1,16 +1,17 @@
 package model;
 
-public abstract class Audio {
+public abstract class Audio implements Comparable<Audio> {
 
     private String name;
     private String url;
     private int duration;
     private int numberReproductions;
+    private int numberReproductionsPlaylist;
     private String idCreator;
 
-
-    
     /**
+     * Constructor of the class
+     * 
      * @param name
      * @param url
      * @param duration
@@ -21,11 +22,31 @@ public abstract class Audio {
         this.url = url;
         this.duration = duration;
         this.idCreator = idCreator;
+        numberReproductions = 0;
+        numberReproductionsPlaylist = 0;
     }
 
-    
-    
-    
+    /* (non-Javadoc)
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(Audio otherAudio) {
+        if (this.numberReproductions < otherAudio.numberReproductions) {
+            return 1;
+        } else if (this.numberReproductions > otherAudio.numberReproductions) {
+            return -1;
+        } else {
+            return 0;
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + name + "\n " + "Id del creador: " + idCreator + "\n " + "Url de la imagen: " + url + "\n "
+                + "Duracion: " + duration + "\n ";
+
+    }
 
     /**
      * @return String return the name
@@ -83,7 +104,6 @@ public abstract class Audio {
         this.numberReproductions = numberReproductions;
     }
 
-
     /**
      * @return String return the idCreator
      */
@@ -96,6 +116,21 @@ public abstract class Audio {
      */
     public void setIdCreator(String idCreator) {
         this.idCreator = idCreator;
+    }
+
+
+    /**
+     * @return int return the numberReproductionsPlaylist
+     */
+    public int getNumberReproductionsPlaylist() {
+        return numberReproductionsPlaylist;
+    }
+
+    /**
+     * @param numberReproductionsPlaylist the numberReproductionsPlaylist to set
+     */
+    public void setNumberReproductionsPlaylist(int numberReproductionsPlaylist) {
+        this.numberReproductionsPlaylist = numberReproductionsPlaylist;
     }
 
 }

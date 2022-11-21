@@ -2,7 +2,7 @@ package model;
 
 import java.time.LocalDate;
 
-public class Song extends Audio {
+public class Song extends Audio implements IPlay {
 
     private String album;
     private double saleValue;
@@ -27,8 +27,15 @@ public class Song extends Audio {
         this.album = album;
         this.saleValue = saleValue;
         genre = TypeGenre.values()[optionGenre];
+        amountSale = 0;
 
     }
+
+    
+    public String play() {
+        return "Reproduciendo la cancion: " +getName();
+    }
+    
 
     /**
      * @return the album
@@ -99,5 +106,16 @@ public class Song extends Audio {
     public void setGenre(TypeGenre genre) {
         this.genre = genre;
     }
+
+
+
+
+    
+    
+
+
+
+
+    
 
 }

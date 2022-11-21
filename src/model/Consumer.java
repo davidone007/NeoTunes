@@ -2,44 +2,46 @@ package model;
 
 import java.util.ArrayList;
 
-
-
 public abstract class Consumer extends User {
 
-   private String mostListenedGenre;
-   private String mostListenedArtist;
-   private String mostListenedCreator;
-   private ArrayList<Playlist> playlists;
-   private int reproductionTime;
+    
+    private ArrayList<Playlist> playlists;
+    private ArrayList<Song> songsOfTheUser;
+    private int amountReproductionGenre[];
    
+    
+
     /**
      * Constructor of the class
+     * 
      * @param nickname
      * @param id
      */
     public Consumer(String nickname, String id) {
         super(nickname, id);
         this.playlists = new ArrayList<Playlist>();
-        
+        this.songsOfTheUser = new ArrayList<Song>();
+        amountReproductionGenre = new int [TypeGenre.values().length];
+      
+
     }
 
-
-
     /**
-     * @param newPlaylist
-     * @return
+     * addPlaylist: What this method does is add a playlist to the Consumer
+     * 
+     * @param newPlaylist Playlist - The playlist to add to the consumer
+     * @return playlists.add(newPlaylist) - A boolean that show if the playlist
+     *         could be added
      */
-    public boolean addPlaylist(Playlist newPlaylist){
+    public boolean addPlaylist(Playlist newPlaylist) {
         return playlists.add(newPlaylist);
     }
 
     /**
-     * searchEnemyByNameLevel: This method search a enemy from the enemy array of
-     * the level
+     * searchPlaylistById: This method search a playlist of a consumer
      * 
-     * @param nameE String - Represents the name of the enemy to search
-     * @return int: pos - The position of the enemy in the array of enemy of
-     *         the level
+     * @param id String - Represents the id of the playlist to search
+     * @return int: pos - The position of the playlist in the ArrayList
      */
     public int searchPlaylistById(String id) {
         int pos = -1;
@@ -56,65 +58,108 @@ public abstract class Consumer extends User {
         return pos;
     }
 
-
-
     /**
-     * @return int return the reproductionTime
+     * listSongsConsumer: List the songs of a consumer
+     * 
+     * @return msj - String: The list of the songs
      */
-    public int getReproductionTime() {
-        return reproductionTime;
+    public String listSongsConsumer() {
+        String msj = "";
+        for (int i = 0; i < songsOfTheUser.size(); i++) {
+            if (songsOfTheUser.get(i) != null) {
+                msj += "-CANCION #" + (i + 1) + "\n" + "Nombre de la cancion: " + songsOfTheUser.get(i).getName()
+                        + "\n" + "Id del creador: " + songsOfTheUser.get(i).getIdCreator() + "\n"
+                        + "Fecha de compra: " + songsOfTheUser.get(i).getBuyDate() + "\n";
+            }
+
+        }
+
+        if (msj == "") {
+            msj = "El usuario aun no ha comprado canciones";
+        }
+
+        return msj;
+
     }
 
     /**
-     * @param reproductionTime the reproductionTime to set
+     * searchSongByNameAndIdCreator: This method search a song on the
+     * ArrayList of the controller
+     * 
+     * @param name      String - Represents the name of the Audio to search
+     * @param idCreator String - Represents the id of the creator of the Audio to
+     *                  search
+     * @return int: pos - The position of the song in the ArrayList
      */
-    public void setReproductionTime(int reproductionTime) {
-        this.reproductionTime = reproductionTime;
-    }
+    public int searchSongByNameAndIdCreator(String name, String idCreator) {
+        int pos = -1;
+        boolean isFound = false;
+        for (int i = 0; i < songsOfTheUser.size() && !isFound; i++) {
+            if (songsOfTheUser.get(i) != null) {
+                if (songsOfTheUser.get(i).getName().equalsIgnoreCase(name)
+                        && songsOfTheUser.get(i).getIdCreator().equalsIgnoreCase(idCreator)) {
+                    pos = i;
+                    isFound = true;
+                }
+            }
+        }
 
-
-    /**
-     * @return String return the mostListenedGenre
-     */
-    public String getMostListenedGenre() {
-        return mostListenedGenre;
-    }
-
-    /**
-     * @param mostListenedGenre the mostListenedGenre to set
-     */
-    public void setMostListenedGenre(String mostListenedGenre) {
-        this.mostListenedGenre = mostListenedGenre;
-    }
-
-    /**
-     * @return String return the mostListenedArtist
-     */
-    public String getMostListenedArtist() {
-        return mostListenedArtist;
+        return pos;
     }
 
     /**
-     * @param mostListenedArtist the mostListenedArtist to set
+     * listPlaylistConsumer: List the playlist of a consumer
+     * 
+     * @return msj - String: The list of the audios or a validation
      */
-    public void setMostListenedArtist(String mostListenedArtist) {
-        this.mostListenedArtist = mostListenedArtist;
+    public String listPlaylistConsumer() {
+        String msj = "";
+        for (int i = 0; i < playlists.size(); i++) {
+            if (playlists.get(i) != null) {
+
+                msj += "PLAYLIST #" + (i + 1) + "\n" + "Nombre de la playlist: " + playlists.get(i).getName() + "\n"
+                        + "Id autogenerado de la playlist: " + playlists.get(i).getAutoId() + "\n";
+
+            }
+
+        }
+
+        if (msj == "") {
+            msj = "El usuario no tiene aun registradas playlists";
+        }
+
+        return msj;
+
     }
 
     /**
-     * @return String return the mostListenedCreator
+     * listPlaylistToShareConsumer: List the playlist of a consumer
+     * 
+     * @return msj - String: The list of the audios or a validation
      */
-    public String getMostListenedCreator() {
-        return mostListenedCreator;
+    public String listPlaylistToShareConsumer() {
+        String msj = "";
+        for (int i = 0; i < playlists.size(); i++) {
+            if (playlists.get(i) != null) {
+
+                msj += "PLAYLIST #" + (i + 1) + "\n" + "Nombre de la playlist: " + playlists.get(i).getName() + "\n"
+                        + "\n";
+
+            }
+
+        }
+
+        if (msj == "") {
+            msj = "El usuario no tiene aun registradas playlists";
+        }
+
+        return msj;
+
     }
 
-    /**
-     * @param mostListenedCreator the mostListenedCreator to set
-     */
-    public void setMostListenedCreator(String mostListenedCreator) {
-        this.mostListenedCreator = mostListenedCreator;
-    }
+  
 
+    
     /**
      * @return ArrayList<Playlist> return the playlists
      */
@@ -129,5 +174,33 @@ public abstract class Consumer extends User {
         this.playlists = playlists;
     }
 
-}
+    /**
+     * @return ArrayList<Song> return the songsOfTheUser
+     */
+    public ArrayList<Song> getSongsOfTheUser() {
+        return songsOfTheUser;
+    }
 
+    /**
+     * @param songsOfTheUser the songsOfTheUser to set
+     */
+    public void setSongsOfTheUser(ArrayList<Song> songsOfTheUser) {
+        this.songsOfTheUser = songsOfTheUser;
+    }
+
+    /**
+     * @return int return the amountReproductionGenre[]
+     */
+    public int[] getAmountReproductionGenre() {
+        return amountReproductionGenre;
+    }
+
+    
+    /**
+     * @param amountReproductionGenre[] the amountReproductionGenre[] to set
+     */
+    public void setAmountReproductionGenre(int[] amountReproductionGenre) {
+        this.amountReproductionGenre = amountReproductionGenre;
+    }
+
+}

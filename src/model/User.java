@@ -2,12 +2,15 @@ package model;
 
 import java.time.LocalDate;
 
-public abstract class User {
+public abstract class User implements Comparable<User> {
 
     private String nickname;
     private String id;
     private LocalDate bondingDate;
+    private int amountReproduction;
 
+
+   
     /**
      * Constructor of the class
      * 
@@ -18,7 +21,30 @@ public abstract class User {
         this.nickname = nickname;
         this.id = id;
         bondingDate = LocalDate.now();
+        amountReproduction = 0;
     }
+        
+    
+
+    
+         /* (non-Javadoc)
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+    public int compareTo(User otherUser) {
+        if (this.amountReproduction < otherUser.amountReproduction) {
+            return 1;
+        } else if (this.amountReproduction > otherUser.amountReproduction) {
+            return -1;
+        } else {
+            return 0;
+        }
+
+    }
+
+
+
+
 
     /**
      * @return String return the nickname
@@ -60,6 +86,21 @@ public abstract class User {
      */
     public void setBondingDate(LocalDate bondingDate) {
         this.bondingDate = bondingDate;
+    }
+
+
+    /**
+     * @return int return the amountReproduction
+     */
+    public int getAmountReproduction() {
+        return amountReproduction;
+    }
+
+    /**
+     * @param amountReproduction the amountReproduction to set
+     */
+    public void setAmountReproduction(int amountReproduction) {
+        this.amountReproduction = amountReproduction;
     }
 
 }
